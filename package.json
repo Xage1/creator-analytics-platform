@@ -1,8 +1,13 @@
 {
-  "devDependencies": {
-    "prisma": "^7.8.0"
-  },
-  "dependencies": {
-    "@prisma/client": "^7.8.0"
+  "name": "creator-analytics-platform",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "db:generate": "npm run generate --workspace=@creator/database",
+    "db:migrate": "npm run migrate --workspace=@creator/database",
+    "db:studio": "npm run studio --workspace=@creator/database"
   }
 }
