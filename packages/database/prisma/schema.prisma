@@ -1,8 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated"
@@ -11,6 +6,43 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+enum PostType {
+  TEXT
+  IMAGE
+  VIDEO
+  CAROUSEL
+  STORY
+  LIVE
+  OTHER
+}
+
+enum AnalyticsPeriod {
+  DAILY
+  WEEKLY
+  MONTHLY
+}
+
+enum AnomalySeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum AnomalyStatus {
+  OPEN
+  ACKNOWLEDGED
+  RESOLVED
+  IGNORED
+}
+
+enum SentimentLabel {
+  POSITIVE
+  NEGATIVE
+  NEUTRAL
+  MIXED
 }
 
 model Platform {
@@ -34,15 +66,239 @@ model Platform {
 
   /// Capabilities
   supportsFollowers Boolean @default(true)
-  supportsLikes Boolean @default(true)
-  supportsComments Boolean @default(true)
-  supportsViews Boolean @default(true)
-  supportsShares Boolean @default(false)
+  supportsLikes     Boolean @default(true)
+  supportsComments  Boolean @default(true)
+  supportsViews     Boolean @default(true)
+  supportsShares    Boolean @default(false)
 
   /// Status
   isActive Boolean @default(true)
 
+  /// Relationships
+  creators Creator[]
+
   /// Audit
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Creator {
+  /// Primary Key
+  id String @id @default(uuid()) @db.Uuid
+
+  /// Platform relationship
+  platformId String   @db.Uuid
+  platform   Platform @relation(fields: [platformId], references: [id], onDelete: Restrict)
+
+  /// Platform-specific account identity
+  externalId String  @db.VarChar(191)
+  username   String? @db.VarChar(100)
+
+  /// Public profile information
+  displayName String? @db.VarChar(150)
+  profileUrl  String? @db.VarChar(500)
+  bio         String? @db.Text
+  avatarUrl   String? @db.VarChar(500)
+  isVerified  Boolean @default(false)
+
+  /// Tracking status
+  isActive    Boolean   @default(true)
+  firstSeenAt DateTime  @default(now())
+  lastSeenAt  DateTime?
+
+  /// Relationships
+  posts           Post[]
+  metricSnapshots MetricSnapshot[]
+  engagementStats EngagementStats[]
+  anomalyEvents   AnomalyEvent[]
+
+  /// Audit
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  /// Prevent duplicate platform accounts
+  @@unique([platformId, externalId])
+  @@unique([platformId, username])
+  @@index([platformId])
+  @@index([isActive])
+  @@index([createdAt])
+}
+
+model Post {
+  /// Primary Key
+  id String @id @default(uuid()) @db.Uuid
+
+  /// Creator relationship
+  creatorId String  @db.Uuid
+  creator   Creator @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+
+  /// Platform-specific post identity
+  externalId String @db.VarChar(191)
+
+  /// Public content information
+  type         PostType @default(OTHER)
+  content      String?  @db.Text
+  postUrl      String?  @db.VarChar(500)
+  thumbnailUrl String?  @db.VarChar(500)
+
+  /// Publication information
+  publishedAt DateTime?
+
+  /// Relationships
+  metricSnapshots MetricSnapshot[]
+  sentimentScores SentimentScore[]
+  anomalyEvents   AnomalyEvent[]
+
+  /// Audit
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  /// Prevent duplicate posts for the same creator
+  @@unique([creatorId, externalId])
+  @@index([creatorId])
+  @@index([publishedAt])
+  @@index([type])
+}
+
+model MetricSnapshot {
+  /// Primary Key
+  id String @id @default(uuid()) @db.Uuid
+
+  /// Owning creator
+  creatorId String  @db.Uuid
+  creator   Creator @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+
+  /// Optional post-level association.
+  /// Null means this snapshot represents the creator account.
+  postId String? @db.Uuid
+  post   Post?   @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  /// Historical metrics
+  followerCount  BigInt?
+  followingCount BigInt?
+  postCount      BigInt?
+
+  totalLikes    BigInt?
+  totalComments BigInt?
+  totalViews    BigInt?
+  totalShares   BigInt?
+
+  engagementRate Decimal? @db.Decimal(8, 4)
+
+  /// Collection metadata
+  capturedAt DateTime @default(now())
+  source     String?  @db.VarChar(100)
+  rawMetrics Json?    @db.JsonB
+
+  createdAt DateTime @default(now())
+
+  @@index([creatorId, capturedAt])
+  @@index([postId, capturedAt])
+  @@index([capturedAt])
+}
+
+model EngagementStats {
+  /// Primary Key
+  id String @id @default(uuid()) @db.Uuid
+
+  /// Creator relationship
+  creatorId String  @db.Uuid
+  creator   Creator @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+
+  /// Aggregation window
+  periodType  AnalyticsPeriod
+  periodStart DateTime
+  periodEnd   DateTime
+
+  /// Aggregated metrics
+  totalPosts    Int    @default(0)
+  totalLikes    BigInt @default(0)
+  totalComments BigInt @default(0)
+  totalViews    BigInt @default(0)
+  totalShares   BigInt @default(0)
+
+  averageLikes    Decimal? @db.Decimal(20, 4)
+  averageComments Decimal? @db.Decimal(20, 4)
+  averageViews    Decimal? @db.Decimal(20, 4)
+
+  averageEngagementRate Decimal @default(0) @db.Decimal(8, 4)
+
+  /// Calculation metadata
+  calculatedAt DateTime @default(now())
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([creatorId, periodType, periodStart])
+  @@index([creatorId, periodStart, periodEnd])
+  @@index([periodType, periodStart])
+}
+
+model AnomalyEvent {
+  /// Primary Key
+  id String @id @default(uuid()) @db.Uuid
+
+  /// Creator relationship
+  creatorId String  @db.Uuid
+  creator   Creator @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+
+  /// Optional post association
+  postId String? @db.Uuid
+  post   Post?   @relation(fields: [postId], references: [id], onDelete: SetNull)
+
+  /// Anomaly classification
+  eventType String          @db.VarChar(100)
+  severity  AnomalySeverity @default(MEDIUM)
+  status    AnomalyStatus   @default(OPEN)
+
+  /// Metric that triggered the anomaly
+  metricName String @db.VarChar(100)
+
+  expectedValue Decimal? @db.Decimal(20, 4)
+  observedValue Decimal? @db.Decimal(20, 4)
+  changePercent Decimal? @db.Decimal(10, 4)
+
+  description String? @db.Text
+  metadata    Json?   @db.JsonB
+
+  /// Lifecycle
+  detectedAt DateTime  @default(now())
+  resolvedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([creatorId, detectedAt])
+  @@index([postId])
+  @@index([severity, status])
+  @@index([eventType])
+}
+
+model SentimentScore {
+  /// Primary Key
+  id String @id @default(uuid()) @db.Uuid
+
+  /// Post relationship
+  postId String @db.Uuid
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  /// Sentiment result
+  label      SentimentLabel
+  score      Decimal        @db.Decimal(5, 4)
+  confidence Decimal?       @db.Decimal(5, 4)
+
+  /// Analysis metadata
+  language   String?  @db.VarChar(20)
+  provider   String?  @db.VarChar(100)
+  modelName  String   @db.VarChar(150)
+  analyzedAt DateTime @default(now())
+
+  metadata Json? @db.JsonB
+
+  createdAt DateTime @default(now())
+
+  @@unique([postId, modelName, analyzedAt])
+  @@index([postId])
+  @@index([label, analyzedAt])
+  @@index([analyzedAt])
 }

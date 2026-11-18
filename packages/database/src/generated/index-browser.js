@@ -138,9 +138,115 @@ exports.Prisma.PlatformScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.CreatorScalarFieldEnum = {
+  id: 'id',
+  platformId: 'platformId',
+  externalId: 'externalId',
+  username: 'username',
+  displayName: 'displayName',
+  profileUrl: 'profileUrl',
+  bio: 'bio',
+  avatarUrl: 'avatarUrl',
+  isVerified: 'isVerified',
+  isActive: 'isActive',
+  firstSeenAt: 'firstSeenAt',
+  lastSeenAt: 'lastSeenAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PostScalarFieldEnum = {
+  id: 'id',
+  creatorId: 'creatorId',
+  externalId: 'externalId',
+  type: 'type',
+  content: 'content',
+  postUrl: 'postUrl',
+  thumbnailUrl: 'thumbnailUrl',
+  publishedAt: 'publishedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.MetricSnapshotScalarFieldEnum = {
+  id: 'id',
+  creatorId: 'creatorId',
+  postId: 'postId',
+  followerCount: 'followerCount',
+  followingCount: 'followingCount',
+  postCount: 'postCount',
+  totalLikes: 'totalLikes',
+  totalComments: 'totalComments',
+  totalViews: 'totalViews',
+  totalShares: 'totalShares',
+  engagementRate: 'engagementRate',
+  capturedAt: 'capturedAt',
+  source: 'source',
+  rawMetrics: 'rawMetrics',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.EngagementStatsScalarFieldEnum = {
+  id: 'id',
+  creatorId: 'creatorId',
+  periodType: 'periodType',
+  periodStart: 'periodStart',
+  periodEnd: 'periodEnd',
+  totalPosts: 'totalPosts',
+  totalLikes: 'totalLikes',
+  totalComments: 'totalComments',
+  totalViews: 'totalViews',
+  totalShares: 'totalShares',
+  averageLikes: 'averageLikes',
+  averageComments: 'averageComments',
+  averageViews: 'averageViews',
+  averageEngagementRate: 'averageEngagementRate',
+  calculatedAt: 'calculatedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AnomalyEventScalarFieldEnum = {
+  id: 'id',
+  creatorId: 'creatorId',
+  postId: 'postId',
+  eventType: 'eventType',
+  severity: 'severity',
+  status: 'status',
+  metricName: 'metricName',
+  expectedValue: 'expectedValue',
+  observedValue: 'observedValue',
+  changePercent: 'changePercent',
+  description: 'description',
+  metadata: 'metadata',
+  detectedAt: 'detectedAt',
+  resolvedAt: 'resolvedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.SentimentScoreScalarFieldEnum = {
+  id: 'id',
+  postId: 'postId',
+  label: 'label',
+  score: 'score',
+  confidence: 'confidence',
+  language: 'language',
+  provider: 'provider',
+  modelName: 'modelName',
+  analyzedAt: 'analyzedAt',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
+};
+
+exports.Prisma.NullableJsonNullValueInput = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull
 };
 
 exports.Prisma.QueryMode = {
@@ -153,9 +259,56 @@ exports.Prisma.NullsOrder = {
   last: 'last'
 };
 
+exports.Prisma.JsonNullValueFilter = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull,
+  AnyNull: Prisma.AnyNull
+};
+exports.PostType = exports.$Enums.PostType = {
+  TEXT: 'TEXT',
+  IMAGE: 'IMAGE',
+  VIDEO: 'VIDEO',
+  CAROUSEL: 'CAROUSEL',
+  STORY: 'STORY',
+  LIVE: 'LIVE',
+  OTHER: 'OTHER'
+};
+
+exports.AnalyticsPeriod = exports.$Enums.AnalyticsPeriod = {
+  DAILY: 'DAILY',
+  WEEKLY: 'WEEKLY',
+  MONTHLY: 'MONTHLY'
+};
+
+exports.AnomalySeverity = exports.$Enums.AnomalySeverity = {
+  LOW: 'LOW',
+  MEDIUM: 'MEDIUM',
+  HIGH: 'HIGH',
+  CRITICAL: 'CRITICAL'
+};
+
+exports.AnomalyStatus = exports.$Enums.AnomalyStatus = {
+  OPEN: 'OPEN',
+  ACKNOWLEDGED: 'ACKNOWLEDGED',
+  RESOLVED: 'RESOLVED',
+  IGNORED: 'IGNORED'
+};
+
+exports.SentimentLabel = exports.$Enums.SentimentLabel = {
+  POSITIVE: 'POSITIVE',
+  NEGATIVE: 'NEGATIVE',
+  NEUTRAL: 'NEUTRAL',
+  MIXED: 'MIXED'
+};
 
 exports.Prisma.ModelName = {
-  Platform: 'Platform'
+  Platform: 'Platform',
+  Creator: 'Creator',
+  Post: 'Post',
+  MetricSnapshot: 'MetricSnapshot',
+  EngagementStats: 'EngagementStats',
+  AnomalyEvent: 'AnomalyEvent',
+  SentimentScore: 'SentimentScore'
 };
 
 /**

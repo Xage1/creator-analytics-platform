@@ -110,9 +110,115 @@ exports.Prisma.PlatformScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.CreatorScalarFieldEnum = {
+  id: 'id',
+  platformId: 'platformId',
+  externalId: 'externalId',
+  username: 'username',
+  displayName: 'displayName',
+  profileUrl: 'profileUrl',
+  bio: 'bio',
+  avatarUrl: 'avatarUrl',
+  isVerified: 'isVerified',
+  isActive: 'isActive',
+  firstSeenAt: 'firstSeenAt',
+  lastSeenAt: 'lastSeenAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PostScalarFieldEnum = {
+  id: 'id',
+  creatorId: 'creatorId',
+  externalId: 'externalId',
+  type: 'type',
+  content: 'content',
+  postUrl: 'postUrl',
+  thumbnailUrl: 'thumbnailUrl',
+  publishedAt: 'publishedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.MetricSnapshotScalarFieldEnum = {
+  id: 'id',
+  creatorId: 'creatorId',
+  postId: 'postId',
+  followerCount: 'followerCount',
+  followingCount: 'followingCount',
+  postCount: 'postCount',
+  totalLikes: 'totalLikes',
+  totalComments: 'totalComments',
+  totalViews: 'totalViews',
+  totalShares: 'totalShares',
+  engagementRate: 'engagementRate',
+  capturedAt: 'capturedAt',
+  source: 'source',
+  rawMetrics: 'rawMetrics',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.EngagementStatsScalarFieldEnum = {
+  id: 'id',
+  creatorId: 'creatorId',
+  periodType: 'periodType',
+  periodStart: 'periodStart',
+  periodEnd: 'periodEnd',
+  totalPosts: 'totalPosts',
+  totalLikes: 'totalLikes',
+  totalComments: 'totalComments',
+  totalViews: 'totalViews',
+  totalShares: 'totalShares',
+  averageLikes: 'averageLikes',
+  averageComments: 'averageComments',
+  averageViews: 'averageViews',
+  averageEngagementRate: 'averageEngagementRate',
+  calculatedAt: 'calculatedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AnomalyEventScalarFieldEnum = {
+  id: 'id',
+  creatorId: 'creatorId',
+  postId: 'postId',
+  eventType: 'eventType',
+  severity: 'severity',
+  status: 'status',
+  metricName: 'metricName',
+  expectedValue: 'expectedValue',
+  observedValue: 'observedValue',
+  changePercent: 'changePercent',
+  description: 'description',
+  metadata: 'metadata',
+  detectedAt: 'detectedAt',
+  resolvedAt: 'resolvedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.SentimentScoreScalarFieldEnum = {
+  id: 'id',
+  postId: 'postId',
+  label: 'label',
+  score: 'score',
+  confidence: 'confidence',
+  language: 'language',
+  provider: 'provider',
+  modelName: 'modelName',
+  analyzedAt: 'analyzedAt',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
+};
+
+exports.Prisma.NullableJsonNullValueInput = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull
 };
 
 exports.Prisma.QueryMode = {
@@ -125,9 +231,56 @@ exports.Prisma.NullsOrder = {
   last: 'last'
 };
 
+exports.Prisma.JsonNullValueFilter = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull,
+  AnyNull: Prisma.AnyNull
+};
+exports.PostType = exports.$Enums.PostType = {
+  TEXT: 'TEXT',
+  IMAGE: 'IMAGE',
+  VIDEO: 'VIDEO',
+  CAROUSEL: 'CAROUSEL',
+  STORY: 'STORY',
+  LIVE: 'LIVE',
+  OTHER: 'OTHER'
+};
+
+exports.AnalyticsPeriod = exports.$Enums.AnalyticsPeriod = {
+  DAILY: 'DAILY',
+  WEEKLY: 'WEEKLY',
+  MONTHLY: 'MONTHLY'
+};
+
+exports.AnomalySeverity = exports.$Enums.AnomalySeverity = {
+  LOW: 'LOW',
+  MEDIUM: 'MEDIUM',
+  HIGH: 'HIGH',
+  CRITICAL: 'CRITICAL'
+};
+
+exports.AnomalyStatus = exports.$Enums.AnomalyStatus = {
+  OPEN: 'OPEN',
+  ACKNOWLEDGED: 'ACKNOWLEDGED',
+  RESOLVED: 'RESOLVED',
+  IGNORED: 'IGNORED'
+};
+
+exports.SentimentLabel = exports.$Enums.SentimentLabel = {
+  POSITIVE: 'POSITIVE',
+  NEGATIVE: 'NEGATIVE',
+  NEUTRAL: 'NEUTRAL',
+  MIXED: 'MIXED'
+};
 
 exports.Prisma.ModelName = {
-  Platform: 'Platform'
+  Platform: 'Platform',
+  Creator: 'Creator',
+  Post: 'Post',
+  MetricSnapshot: 'MetricSnapshot',
+  EngagementStats: 'EngagementStats',
+  AnomalyEvent: 'AnomalyEvent',
+  SentimentScore: 'SentimentScore'
 };
 /**
  * Create the Client
@@ -168,6 +321,7 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
+  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
@@ -176,13 +330,13 @@ const config = {
       }
     }
   },
-  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Get a free hosted Postgres database in seconds: `npx create-db`\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel Platform {\n  /// Primary Key\n  id String @id @default(uuid()) @db.Uuid\n\n  /// Display Name\n  name String @unique @db.VarChar(100)\n\n  /// Internal identifier\n  slug String @unique @db.VarChar(100)\n\n  /// Homepage\n  baseUrl String @db.VarChar(255)\n\n  /// Optional description\n  description String? @db.VarChar(500)\n\n  /// Branding\n  logoUrl String? @db.VarChar(255)\n\n  /// Capabilities\n  supportsFollowers Boolean @default(true)\n  supportsLikes     Boolean @default(true)\n  supportsComments  Boolean @default(true)\n  supportsViews     Boolean @default(true)\n  supportsShares    Boolean @default(false)\n\n  /// Status\n  isActive Boolean @default(true)\n\n  /// Audit\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n}\n",
-  "inlineSchemaHash": "bddced394b3a4ccca59362e4d0d373811022f69259f362fb140399cfd241e8cb",
+  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nenum PostType {\n  TEXT\n  IMAGE\n  VIDEO\n  CAROUSEL\n  STORY\n  LIVE\n  OTHER\n}\n\nenum AnalyticsPeriod {\n  DAILY\n  WEEKLY\n  MONTHLY\n}\n\nenum AnomalySeverity {\n  LOW\n  MEDIUM\n  HIGH\n  CRITICAL\n}\n\nenum AnomalyStatus {\n  OPEN\n  ACKNOWLEDGED\n  RESOLVED\n  IGNORED\n}\n\nenum SentimentLabel {\n  POSITIVE\n  NEGATIVE\n  NEUTRAL\n  MIXED\n}\n\nmodel Platform {\n  /// Primary Key\n  id String @id @default(uuid()) @db.Uuid\n\n  /// Display Name\n  name String @unique @db.VarChar(100)\n\n  /// Internal identifier\n  slug String @unique @db.VarChar(100)\n\n  /// Homepage\n  baseUrl String @db.VarChar(255)\n\n  /// Optional description\n  description String? @db.VarChar(500)\n\n  /// Branding\n  logoUrl String? @db.VarChar(255)\n\n  /// Capabilities\n  supportsFollowers Boolean @default(true)\n  supportsLikes     Boolean @default(true)\n  supportsComments  Boolean @default(true)\n  supportsViews     Boolean @default(true)\n  supportsShares    Boolean @default(false)\n\n  /// Status\n  isActive Boolean @default(true)\n\n  /// Relationships\n  creators Creator[]\n\n  /// Audit\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n}\n\nmodel Creator {\n  /// Primary Key\n  id String @id @default(uuid()) @db.Uuid\n\n  /// Platform relationship\n  platformId String   @db.Uuid\n  platform   Platform @relation(fields: [platformId], references: [id], onDelete: Restrict)\n\n  /// Platform-specific account identity\n  externalId String  @db.VarChar(191)\n  username   String? @db.VarChar(100)\n\n  /// Public profile information\n  displayName String? @db.VarChar(150)\n  profileUrl  String? @db.VarChar(500)\n  bio         String? @db.Text\n  avatarUrl   String? @db.VarChar(500)\n  isVerified  Boolean @default(false)\n\n  /// Tracking status\n  isActive    Boolean   @default(true)\n  firstSeenAt DateTime  @default(now())\n  lastSeenAt  DateTime?\n\n  /// Relationships\n  posts           Post[]\n  metricSnapshots MetricSnapshot[]\n  engagementStats EngagementStats[]\n  anomalyEvents   AnomalyEvent[]\n\n  /// Audit\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  /// Prevent duplicate platform accounts\n  @@unique([platformId, externalId])\n  @@unique([platformId, username])\n  @@index([platformId])\n  @@index([isActive])\n  @@index([createdAt])\n}\n\nmodel Post {\n  /// Primary Key\n  id String @id @default(uuid()) @db.Uuid\n\n  /// Creator relationship\n  creatorId String  @db.Uuid\n  creator   Creator @relation(fields: [creatorId], references: [id], onDelete: Cascade)\n\n  /// Platform-specific post identity\n  externalId String @db.VarChar(191)\n\n  /// Public content information\n  type         PostType @default(OTHER)\n  content      String?  @db.Text\n  postUrl      String?  @db.VarChar(500)\n  thumbnailUrl String?  @db.VarChar(500)\n\n  /// Publication information\n  publishedAt DateTime?\n\n  /// Relationships\n  metricSnapshots MetricSnapshot[]\n  sentimentScores SentimentScore[]\n  anomalyEvents   AnomalyEvent[]\n\n  /// Audit\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  /// Prevent duplicate posts for the same creator\n  @@unique([creatorId, externalId])\n  @@index([creatorId])\n  @@index([publishedAt])\n  @@index([type])\n}\n\nmodel MetricSnapshot {\n  /// Primary Key\n  id String @id @default(uuid()) @db.Uuid\n\n  /// Owning creator\n  creatorId String  @db.Uuid\n  creator   Creator @relation(fields: [creatorId], references: [id], onDelete: Cascade)\n\n  /// Optional post-level association.\n  /// Null means this snapshot represents the creator account.\n  postId String? @db.Uuid\n  post   Post?   @relation(fields: [postId], references: [id], onDelete: Cascade)\n\n  /// Historical metrics\n  followerCount  BigInt?\n  followingCount BigInt?\n  postCount      BigInt?\n\n  totalLikes    BigInt?\n  totalComments BigInt?\n  totalViews    BigInt?\n  totalShares   BigInt?\n\n  engagementRate Decimal? @db.Decimal(8, 4)\n\n  /// Collection metadata\n  capturedAt DateTime @default(now())\n  source     String?  @db.VarChar(100)\n  rawMetrics Json?    @db.JsonB\n\n  createdAt DateTime @default(now())\n\n  @@index([creatorId, capturedAt])\n  @@index([postId, capturedAt])\n  @@index([capturedAt])\n}\n\nmodel EngagementStats {\n  /// Primary Key\n  id String @id @default(uuid()) @db.Uuid\n\n  /// Creator relationship\n  creatorId String  @db.Uuid\n  creator   Creator @relation(fields: [creatorId], references: [id], onDelete: Cascade)\n\n  /// Aggregation window\n  periodType  AnalyticsPeriod\n  periodStart DateTime\n  periodEnd   DateTime\n\n  /// Aggregated metrics\n  totalPosts    Int    @default(0)\n  totalLikes    BigInt @default(0)\n  totalComments BigInt @default(0)\n  totalViews    BigInt @default(0)\n  totalShares   BigInt @default(0)\n\n  averageLikes    Decimal? @db.Decimal(20, 4)\n  averageComments Decimal? @db.Decimal(20, 4)\n  averageViews    Decimal? @db.Decimal(20, 4)\n\n  averageEngagementRate Decimal @default(0) @db.Decimal(8, 4)\n\n  /// Calculation metadata\n  calculatedAt DateTime @default(now())\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  @@unique([creatorId, periodType, periodStart])\n  @@index([creatorId, periodStart, periodEnd])\n  @@index([periodType, periodStart])\n}\n\nmodel AnomalyEvent {\n  /// Primary Key\n  id String @id @default(uuid()) @db.Uuid\n\n  /// Creator relationship\n  creatorId String  @db.Uuid\n  creator   Creator @relation(fields: [creatorId], references: [id], onDelete: Cascade)\n\n  /// Optional post association\n  postId String? @db.Uuid\n  post   Post?   @relation(fields: [postId], references: [id], onDelete: SetNull)\n\n  /// Anomaly classification\n  eventType String          @db.VarChar(100)\n  severity  AnomalySeverity @default(MEDIUM)\n  status    AnomalyStatus   @default(OPEN)\n\n  /// Metric that triggered the anomaly\n  metricName String @db.VarChar(100)\n\n  expectedValue Decimal? @db.Decimal(20, 4)\n  observedValue Decimal? @db.Decimal(20, 4)\n  changePercent Decimal? @db.Decimal(10, 4)\n\n  description String? @db.Text\n  metadata    Json?   @db.JsonB\n\n  /// Lifecycle\n  detectedAt DateTime  @default(now())\n  resolvedAt DateTime?\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  @@index([creatorId, detectedAt])\n  @@index([postId])\n  @@index([severity, status])\n  @@index([eventType])\n}\n\nmodel SentimentScore {\n  /// Primary Key\n  id String @id @default(uuid()) @db.Uuid\n\n  /// Post relationship\n  postId String @db.Uuid\n  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)\n\n  /// Sentiment result\n  label      SentimentLabel\n  score      Decimal        @db.Decimal(5, 4)\n  confidence Decimal?       @db.Decimal(5, 4)\n\n  /// Analysis metadata\n  language   String?  @db.VarChar(20)\n  provider   String?  @db.VarChar(100)\n  modelName  String   @db.VarChar(150)\n  analyzedAt DateTime @default(now())\n\n  metadata Json? @db.JsonB\n\n  createdAt DateTime @default(now())\n\n  @@unique([postId, modelName, analyzedAt])\n  @@index([postId])\n  @@index([label, analyzedAt])\n  @@index([analyzedAt])\n}\n",
+  "inlineSchemaHash": "05e6aa78b3760ae6196bcb1c761973f13e915249cfc1239c7924f33e3796d064",
   "copyEngine": true
 }
 config.dirname = '/'
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"Platform\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"slug\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"baseUrl\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"logoUrl\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"supportsFollowers\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"supportsLikes\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"supportsComments\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"supportsViews\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"supportsShares\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"isActive\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"Platform\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"slug\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"baseUrl\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"logoUrl\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"supportsFollowers\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"supportsLikes\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"supportsComments\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"supportsViews\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"supportsShares\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"isActive\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"creators\",\"kind\":\"object\",\"type\":\"Creator\",\"relationName\":\"CreatorToPlatform\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"Creator\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"platformId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"platform\",\"kind\":\"object\",\"type\":\"Platform\",\"relationName\":\"CreatorToPlatform\"},{\"name\":\"externalId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"username\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"displayName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"profileUrl\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"bio\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"avatarUrl\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"isVerified\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"isActive\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"firstSeenAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"lastSeenAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"posts\",\"kind\":\"object\",\"type\":\"Post\",\"relationName\":\"CreatorToPost\"},{\"name\":\"metricSnapshots\",\"kind\":\"object\",\"type\":\"MetricSnapshot\",\"relationName\":\"CreatorToMetricSnapshot\"},{\"name\":\"engagementStats\",\"kind\":\"object\",\"type\":\"EngagementStats\",\"relationName\":\"CreatorToEngagementStats\"},{\"name\":\"anomalyEvents\",\"kind\":\"object\",\"type\":\"AnomalyEvent\",\"relationName\":\"AnomalyEventToCreator\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"Post\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"creatorId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"creator\",\"kind\":\"object\",\"type\":\"Creator\",\"relationName\":\"CreatorToPost\"},{\"name\":\"externalId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"type\",\"kind\":\"enum\",\"type\":\"PostType\"},{\"name\":\"content\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"postUrl\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"thumbnailUrl\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"publishedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"metricSnapshots\",\"kind\":\"object\",\"type\":\"MetricSnapshot\",\"relationName\":\"MetricSnapshotToPost\"},{\"name\":\"sentimentScores\",\"kind\":\"object\",\"type\":\"SentimentScore\",\"relationName\":\"PostToSentimentScore\"},{\"name\":\"anomalyEvents\",\"kind\":\"object\",\"type\":\"AnomalyEvent\",\"relationName\":\"AnomalyEventToPost\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"MetricSnapshot\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"creatorId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"creator\",\"kind\":\"object\",\"type\":\"Creator\",\"relationName\":\"CreatorToMetricSnapshot\"},{\"name\":\"postId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"post\",\"kind\":\"object\",\"type\":\"Post\",\"relationName\":\"MetricSnapshotToPost\"},{\"name\":\"followerCount\",\"kind\":\"scalar\",\"type\":\"BigInt\"},{\"name\":\"followingCount\",\"kind\":\"scalar\",\"type\":\"BigInt\"},{\"name\":\"postCount\",\"kind\":\"scalar\",\"type\":\"BigInt\"},{\"name\":\"totalLikes\",\"kind\":\"scalar\",\"type\":\"BigInt\"},{\"name\":\"totalComments\",\"kind\":\"scalar\",\"type\":\"BigInt\"},{\"name\":\"totalViews\",\"kind\":\"scalar\",\"type\":\"BigInt\"},{\"name\":\"totalShares\",\"kind\":\"scalar\",\"type\":\"BigInt\"},{\"name\":\"engagementRate\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"capturedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"source\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"rawMetrics\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"EngagementStats\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"creatorId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"creator\",\"kind\":\"object\",\"type\":\"Creator\",\"relationName\":\"CreatorToEngagementStats\"},{\"name\":\"periodType\",\"kind\":\"enum\",\"type\":\"AnalyticsPeriod\"},{\"name\":\"periodStart\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"periodEnd\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"totalPosts\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"totalLikes\",\"kind\":\"scalar\",\"type\":\"BigInt\"},{\"name\":\"totalComments\",\"kind\":\"scalar\",\"type\":\"BigInt\"},{\"name\":\"totalViews\",\"kind\":\"scalar\",\"type\":\"BigInt\"},{\"name\":\"totalShares\",\"kind\":\"scalar\",\"type\":\"BigInt\"},{\"name\":\"averageLikes\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"averageComments\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"averageViews\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"averageEngagementRate\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"calculatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"AnomalyEvent\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"creatorId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"creator\",\"kind\":\"object\",\"type\":\"Creator\",\"relationName\":\"AnomalyEventToCreator\"},{\"name\":\"postId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"post\",\"kind\":\"object\",\"type\":\"Post\",\"relationName\":\"AnomalyEventToPost\"},{\"name\":\"eventType\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"severity\",\"kind\":\"enum\",\"type\":\"AnomalySeverity\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"AnomalyStatus\"},{\"name\":\"metricName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"expectedValue\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"observedValue\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"changePercent\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"metadata\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"detectedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"resolvedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"SentimentScore\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"postId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"post\",\"kind\":\"object\",\"type\":\"Post\",\"relationName\":\"PostToSentimentScore\"},{\"name\":\"label\",\"kind\":\"enum\",\"type\":\"SentimentLabel\"},{\"name\":\"score\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"confidence\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"language\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"provider\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"modelName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"analyzedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"metadata\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
 defineDmmfProperty(exports.Prisma, config.runtimeDataModel)
 config.engineWasm = {
   getRuntime: async () => require('./query_engine_bg.js'),

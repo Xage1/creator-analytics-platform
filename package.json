@@ -1,13 +1,23 @@
 {
-  "name": "creator-analytics-platform",
-  "private": true,
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
-  "scripts": {
-    "db:generate": "npm run generate --workspace=@creator/database",
-    "db:migrate": "npm run migrate --workspace=@creator/database",
-    "db:studio": "npm run studio --workspace=@creator/database"
-  }
+    "name":  "creator-analytics-platform",
+    "version":  "1.0.0",
+    "private":  true,
+    "workspaces":  [
+                       "apps/*",
+                       "packages/*"
+                   ],
+    "scripts":  {
+                    "db:generate":  "npm run generate --workspace=@creator/database",
+                    "db:migrate":  "npm run migrate --workspace=@creator/database",
+                    "db:studio":  "npm run studio --workspace=@creator/database",
+                    "db:seed":  "npm run build --workspace=@creator/database \u0026\u0026 tsx scripts/seed.mts",
+                    "build":  "npm run build --workspace=@creator/database \u0026\u0026 npm run build --workspace=@creator/api",
+                    "dev":  "npm run build --workspace=@creator/database \u0026\u0026 npm run dev --workspace=@creator/api",
+                    "start":  "npm run start --workspace=@creator/api"
+                },
+    "devDependencies":  {
+                            "@types/node":  "^22.15.30",
+                            "tsx":  "^4.20.3",
+                            "typescript":  "^5.9.2"
+                        }
 }
