@@ -9,9 +9,11 @@ const helmet_1 = __importDefault(require("helmet"));
 const database_1 = require("@creator/database");
 const platformRoutes_js_1 = __importDefault(require("./routes/platformRoutes.js"));
 const creatorRoutes_js_1 = __importDefault(require("./routes/creatorRoutes.js"));
+const engagementRoutes_js_1 = __importDefault(require("./routes/engagementRoutes.js"));
 const postRoutes_js_1 = __importDefault(require("./routes/postRoutes.js"));
-const errorHandler_js_1 = require("./middleware/errorHandler.js");
 const metricRoutes_js_1 = __importDefault(require("./routes/metricRoutes.js"));
+const anomalyRoutes_js_1 = __importDefault(require("./routes/anomalyRoutes.js"));
+const errorHandler_js_1 = require("./middleware/errorHandler.js");
 const app = (0, express_1.default)();
 const allowedOrigins = (process.env.CLIENT_URL ?? "http://localhost:3000,http://localhost:5173")
     .split(",")
@@ -20,7 +22,7 @@ const allowedOrigins = (process.env.CLIENT_URL ?? "http://localhost:3000,http://
 app.use((0, helmet_1.default)());
 app.use((0, cors_1.default)({
     origin: allowedOrigins,
-    credentials: true
+    credentials: true,
 }));
 app.use(express_1.default.json({ limit: "1mb" }));
 app.use(express_1.default.urlencoded({ extended: true, limit: "1mb" }));
@@ -28,7 +30,7 @@ app.get("/", (_req, res) => {
     res.json({
         success: true,
         message: "Creator Analytics Platform API",
-        version: "1.0.0"
+        version: "1.0.0",
     });
 });
 app.get("/api/health", async (_req, res, next) => {
@@ -39,9 +41,9 @@ app.get("/api/health", async (_req, res, next) => {
             status: "healthy",
             services: {
                 api: "operational",
-                database: "connected"
+                database: "connected",
             },
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
         });
     }
     catch (error) {
@@ -50,8 +52,10 @@ app.get("/api/health", async (_req, res, next) => {
 });
 app.use("/api/platforms", platformRoutes_js_1.default);
 app.use("/api/creators", creatorRoutes_js_1.default);
+app.use("/api/engagement", engagementRoutes_js_1.default);
 app.use("/api/posts", postRoutes_js_1.default);
 app.use("/api/metrics", metricRoutes_js_1.default);
+app.use("/api/anomalies", anomalyRoutes_js_1.default);
 app.use(errorHandler_js_1.notFoundHandler);
 app.use(errorHandler_js_1.errorHandler);
 exports.default = app;

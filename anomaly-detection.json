@@ -1,0 +1,15 @@
+{
+    "thresholdPercent":  30,
+    "creatorId":  "fc461533-6bbf-4753-ac37-cd029bd76477",
+    "metrics":  [
+                    "followerCount",
+                    "followingCount",
+                    "postCount",
+                    "totalLikes",
+                    "totalComments",
+                    "totalViews",
+                    "totalShares",
+                    "engagementRate"
+                ],
+    "lookbackDays":  30
+}
